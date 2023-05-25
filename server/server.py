@@ -20,20 +20,33 @@ server.listen(20)
 
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-def listenForClients(cs):
-    """
-    This function keeps listening for a message from the 'CS' socket
-    Whenever a message is received, broadcast it to all other connected clients
-    """
+def listenForClients(clientSet):
+    # This function keeps listening for a message from the clientSet socket
+    # Whenever a message is received, broadcast it to all other connected clients
     while True:
         try:
-            # keep listening for a message from 'CS' socket
-            msg = cs.recv(1024).decode()
+            # keep listening for a message from clientSet socket
+            msg = clientSet.recv(1024).decode().strip() # Strip any leading/trailing whitespace
         except Exception as e:
-            # if client no longer connected, remove it from the set
+            # if client is no longer connected, remove it from the set
             print(f"[!] Error: {e}")
-            clientSocketList.remove(cs)
+            clientSocketList.remove(clientSet)
         else:
+            if len(msg) <= 0:
+                # if client disconnects, function returns empty message - quick and dirty fix
+                raise Exception("Client disconnected!")
+            if not msg:
+                # ignore empty messages
+                continue
+            # performing basic input validation on received message
+            if len(msg) > 255:
+                # reject messages over 255 characters - good old SMS 
+                print("[!] Error: Message too long. Ignoring")
+                continue
+            if not all(c.isprintable() for c in msg):
+                # Reject messages containing non-printable characters
+                print("[!] Error: Message contains non-printable characters. Ignoring")
+                continue
             # if we received a message, replace the separator token with ":" for nice printing
             msg = msg.replace(sepToken, ":")
         # iterate over all connected sockets
@@ -66,5 +79,3 @@ while True:
     thread.daemon = True
     # start the thread
     thread.start()
-
-

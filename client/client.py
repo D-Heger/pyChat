@@ -28,7 +28,8 @@ print(f"[*] Connecting to {SERVER_HOST}:{SERVER_PORT}...")
 server.connect((SERVER_HOST, SERVER_PORT))
 print("[+] Connected.")
 
-# print out possible user commands
+# print out possible user commands and other relevant information
+print("[?] Max length of message is 255 characters.")
 print("[?] Type '/exit' as your message to exit the chat.")
 print("[?] Type '/rename' as your message to change your name.")
 
