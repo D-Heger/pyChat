@@ -1,3 +1,4 @@
+import sys
 import socket
 from threading import Thread
 
@@ -19,7 +20,7 @@ server.listen(20)
 
 print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
-def listen_for_clients(cs):
+def listenForClients(cs):
     """
     This function keeps listening for a message from the 'CS' socket
     Whenever a message is received, broadcast it to all other connected clients
@@ -40,6 +41,19 @@ def listen_for_clients(cs):
             # and send the message
             clientSocket.send(msg.encode())
 
+def monitorTerminationSignal():
+    input("Press enter to stop the server\n")
+    print("[*] Closing the server...")
+    # close all client sockets
+    for cs in clientSocketList:
+        cs.close()
+    # close server socket
+    server.close()
+    sys.exit(0)
+
+terminaltionThread = Thread(target=monitorTerminationSignal)
+terminaltionThread.start()
+
 while True:
     # we keep listening for new connections all the time
     clientSocket, clientAddress = server.accept()
@@ -47,15 +61,10 @@ while True:
     # add the new connected client to connected sockets
     clientSocketList.add(clientSocket)
     # start a new thread that listens for each client's message
-    thread = Thread(target=listen_for_clients, args=(clientSocket,))
+    thread = Thread(target=listenForClients, args=(clientSocket,))
     # make the thread daemon so is ends whenever the main thread ends
     thread.daemon = True
     # start the thread
     thread.start()
 
 
-# close all client sockets
-for cs in clientSocketList:
-    cs.close()
-# close server socket
-server.close()
