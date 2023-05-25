@@ -5,6 +5,10 @@ Currently, it doesn't offer many features but can be easily expanded or reworked
 ### Built with
 [![Python][python]][python-url]
 
+### Getting started
+- Python (at least 3.6, built with 3.11.3)
+- Colorama | `pip install colorama` (for client side only)
+
 ### Usage
 If you want to run this application locally, you don't have to change any code.
 If you want to run this application online (which in the current state I wouldn't recommend, as it's insecure), you need to change the **SERVER_HOST and SERVER_PORT** values in **both server.py and client.py** to your local/server's IP and a port of your choice. Just make sure that the port you want to use is open.
